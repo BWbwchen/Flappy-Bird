@@ -11,6 +11,7 @@ class Game :
         self.HEIGHT= 512
         self.score = 0
         self.increase = 1
+        self.touch = False
 
         # bird parameter
         self.x = self.WIDTH/4
@@ -18,20 +19,16 @@ class Game :
         self.size = 20
         self.gravity = 0.0007
         self.lift = 0.4
-        #self.gravity = 0.0002
         self.velocity = 0
 
         # tube parameter
         self.tube = self.Tube(self.WIDTH, self.HEIGHT)
         self.tube_list = []
 
-        self.touch = False
-        
-
-    def game_loop (self) :
         pygame.init()
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
 
+    def game_loop (self) :
         self.reset()
         jump = False
         self.tube_list.append(self.Tube(self.WIDTH, self.HEIGHT))
@@ -62,6 +59,7 @@ class Game :
             self.detect_collision()
             self.deal_tube_list(count%2000==0)
             
+            # draw
             self.screen.blit(self.screen, (0,0))
             pygame.display.flip()
             #pygame.display.update
@@ -124,11 +122,7 @@ class Game :
                 print("score is : " + str(self.score))
                 self.score += self.increase
 
-
-
-                
-                
-
+    # ---------------- inner class ---------------#
     class Tube:
         def __init__ (self, WIDTH, HEIGHT) :
             random.seed(time.time())
@@ -144,31 +138,25 @@ class Game :
             self.__update_tubes() 
 
         def __draw_tubes (self, screen, touch) :
-            #for i, val in enumerate(self.tube_list): 
-                # top tube
-                white = (255, 255, 255)
-                red = (255, 0, 0)
-                color = white
+            # top tube
+            white = (255, 255, 255)
+            red = (255, 0, 0)
+            color = white
 
-                if touch :
-                    color = red
+            if touch :
+                color = red
 
-                pygame.draw.rect(screen, color, 
-                        (self.tube_x, 0, self.tube_width, self.tube_height), 0)
-                # buttom tube
-                pygame.draw.rect(screen, color, 
-                        (self.tube_x, self.tube_height + self.tube_gap, 
-                         self.tube_width, 
-                             self.HEIGHT - self.tube_height - self.tube_gap), 0)
+            pygame.draw.rect(screen, color, 
+                    (self.tube_x, 0, self.tube_width, self.tube_height), 0)
+            # buttom tube
+            pygame.draw.rect(screen, color, 
+                    (self.tube_x, self.tube_height + self.tube_gap, 
+                     self.tube_width, 
+                         self.HEIGHT - self.tube_height - self.tube_gap), 0)
 
         def __update_tubes (self) :
-            #for i, val in enumerate(self.tube_list): 
-                #val -= self.tube_velocity
-                self.tube_x -= self.tube_velocity
-
-
+            self.tube_x -= self.tube_velocity
 
 
 game = Game()
 game.game_loop()
-
