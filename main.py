@@ -11,7 +11,6 @@ class Game :
         self.HEIGHT= 512
         self.score = 0
         self.increase = 1
-        self.touch = False
 
         # bird parameter
         self.x = self.WIDTH/4
@@ -39,7 +38,6 @@ class Game :
             else :
                 count = count + 1
             jump = False
-            self.touch = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and  
                     event.key == pygame.K_ESCAPE):
@@ -73,7 +71,6 @@ class Game :
         self.tube = self.Tube(self.WIDTH, self.HEIGHT)
         self.tube_list = []
 
-        self.touch = False
 
     def draw_bird (self) :
         pygame.draw.circle(self.screen, (255, 255, 255), 
@@ -100,7 +97,8 @@ class Game :
             self.tube_list.append(self.Tube(self.WIDTH, self.HEIGHT))
 
         for i, val in enumerate(self.tube_list): 
-            val.update_and_draw(self.screen, self.touch)
+            val.update_and_draw(self.screen)
+            val.tube_touch = False
             if val.tube_x < 0 :
                 self.tube_list.pop(i)
         
@@ -111,10 +109,10 @@ class Game :
                 (val.tube_x <= self.x+self.size <= val.tube_x+val.tube_width)) and\
                 ((self.y <= val.tube_height) or\
                 (self.y+self.size >= val.tube_height+val.tube_gap)) :
-                self.reset()
+                #self.reset()
                 print("gameover")
                 print("score is : " + str(self.score))
-                self.touch = True
+                val.tube_touch = True
             elif (val.tube_x <= self.x <= val.tube_x + val.tube_width) or\
                 (val.tube_x <= self.x+self.size <= val.tube_x+val.tube_width):
                 # TODO : slow down the add
@@ -132,18 +130,19 @@ class Game :
             self.HEIGHT = HEIGHT
             self.tube_x = WIDTH 
             self.tube_velocity = 0.1
+            self.tube_touch = False
 
-        def update_and_draw (self, screen, touch):
-            self.__draw_tubes(screen, touch) 
+        def update_and_draw (self, screen):
+            self.__draw_tubes(screen) 
             self.__update_tubes() 
 
-        def __draw_tubes (self, screen, touch) :
+        def __draw_tubes (self, screen) :
             # top tube
             white = (255, 255, 255)
             red = (255, 0, 0)
             color = white
 
-            if touch :
+            if self.tube_touch :
                 color = red
 
             pygame.draw.rect(screen, color, 
