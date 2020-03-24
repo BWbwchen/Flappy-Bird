@@ -7,7 +7,7 @@ class Tube:
     def __init__ (self, WIDTH, HEIGHT) :
         random.seed(time.time())
         self.tube_width = 40 
-        self.tube_gap = random.randrange(100, 300)
+        self.tube_gap = random.randrange(101, 300)
         self.tube_height = random.randrange(10, 200)
         self.HEIGHT = HEIGHT
         self.tube_x = WIDTH 
@@ -44,10 +44,17 @@ class TubeList :
         self.SCREEN_WIDTH = WIDTH
         self.SCREEN_HEIGHT = HEIGHT
         self.tube_list = []
+        self.t = 0
 
     def update (self, bird, screen, flag) :
-        self.__detect_collision(bird)
+        self.t = self.t + 1
+        (end, in_tube) = self.__detect_collision(bird)
         self.__deal_tube_list(screen, flag)
+        if self.t == 2500:
+            #print("delta is :" + str(int(self.tube_list[1].tube_x - self.tube_list[0].tube_x)))
+            #print(self.tube_list)
+            self.t = 0
+        return (end, in_tube)
 
     def __deal_tube_list (self, screen, flag) :
         if flag :
@@ -60,22 +67,30 @@ class TubeList :
                 self.tube_list.pop(i)
 
     def __detect_collision(self, bird) :
+        in_tube = False
         for i, val in enumerate(self.tube_list):
             if ((val.tube_x <= bird.x <= val.tube_x + val.tube_width) or\
                 (val.tube_x <= bird.x+bird.size <= val.tube_x+val.tube_width)) and\
                 ((bird.y <= val.tube_height) or\
                 (bird.y+bird.size >= val.tube_height+val.tube_gap)) :
-                #self.reset()
-                print("gameover")
+                self.reset()
+                #print("gameover")
                 #print("score is : " + str(self.score))
                 val.tube_touch = True
-            elif (val.tube_x <= bird.x <= val.tube_x + val.tube_width) or\
-                (val.tube_x <= bird.x+bird.size <= val.tube_x+val.tube_width):
+                return (True, in_tube)
+            elif bird.y >= self.SCREEN_HEIGHT - 5:
+                val.tube_touch = True
+                return (True, in_tube)
+            elif (val.tube_x <= bird.x <= val.tube_x + val.tube_width) :
+                in_tube = True
+                # PASS the tube
                 # TODO : slow down the add
-                print("pass")
+                #print("pass")
                 #print("score is : " + str(self.score))
                 # TODO : score
                 #self.score += self.increase
+        self.bird_x_pre = bird.x
+        return (False, in_tube)
 
     def reset(self):
         self.tube_list = []
