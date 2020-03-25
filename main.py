@@ -56,6 +56,7 @@ class Game :
 
             #tube
             (end, in_tube) = self.tube.update(self.bird, self.screen, count%1510==0)
+            self.q_learning.request_reward(jump, end, self.bird, self.tube_list)
 
             if end :
                 self.reset()
