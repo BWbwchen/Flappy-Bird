@@ -44,16 +44,10 @@ class TubeList :
         self.SCREEN_WIDTH = WIDTH
         self.SCREEN_HEIGHT = HEIGHT
         self.tube_list = []
-        self.t = 0
 
     def update (self, bird, screen, flag) :
-        self.t = self.t + 1
         (end, in_tube) = self.__detect_collision(bird)
         self.__deal_tube_list(screen, flag)
-        if self.t == 2500:
-            #print("delta is :" + str(int(self.tube_list[1].tube_x - self.tube_list[0].tube_x)))
-            #print(self.tube_list)
-            self.t = 0
         return (end, in_tube)
 
     def __deal_tube_list (self, screen, flag) :
