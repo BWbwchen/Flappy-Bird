@@ -13,6 +13,7 @@ class Game :
         self.score = 0
         self.player_control = control
         self.count = 1450
+        self.generation = 0
 
         # bird parameter
         self.bird = bird.Bird(self.WIDTH, self.HEIGHT)
@@ -31,7 +32,7 @@ class Game :
         jump = False
         pass_tube = False
         while True:
-            pygame.time.delay(1)
+            #pygame.time.delay(1)
             if self.count > 100000000 :
                 self.count = 0
             else :
@@ -40,6 +41,7 @@ class Game :
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and  
                     event.key == pygame.K_ESCAPE):
+                    self.q_learning.store_date()
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE :
@@ -54,12 +56,12 @@ class Game :
             # bird
             self.bird.update_and_draw(self.screen, jump)
 
-            print(self.count)
             #tube
             (end, in_tube) = self.tube.update(self.bird, self.screen, self.count%1510==0)
             self.q_learning.request_reward(jump, end, self.bird, self.tube.tube_list)
 
             if end :
+                print("[INFO] " + str(self.generation) + " generation score : " + str(self.score))
                 self.reset()
                 pass_tube = False
 
@@ -83,6 +85,7 @@ class Game :
         self.tube.reset()
         self.count = 1450
         self.score = 0
+        self.generation = self.generation + 1
 
 
 def main () :
